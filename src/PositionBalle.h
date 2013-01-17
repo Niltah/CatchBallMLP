@@ -3,27 +3,26 @@
 
 #include <cstdlib>
 #include <cstdio>
+#include <vector>
 
 using namespace std;
 
 class PositionBalle
 {
  public :
+  PositionBalle();
+  PositionBalle(vector<float> Position, time_t t);
   PositionBalle(float x, float y, float z, time_t t);
   
-  float getX();
-  float getY();
-  float getZ();
+  ~PositionBalle();
+  
+  vector<float> getPosition();
   time_t getT();
-  void setX(float x);
-  void setY(float y);
-  void setZ(float z);
+  void setPosition(vector<float> Position);
   void setT(time_t t);
 
  protected :
-  float x;
-  float y;
-  float z;
+  vector<float> Position; // x, y, z
   time_t t;
 };
 
