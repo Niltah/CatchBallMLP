@@ -1,0 +1,96 @@
+/*--------------------------------------------------------------------------
+- entete standard, on efface tout et on charge les fonctions specifiques
+---------------------------------------------------------------------------*/
+
+  kill(all);
+  repertoire :"./"$ 
+/* A MODIFIER :repertoire de votre fichier tr_homogene.mac */
+  file_search_maxima: append (file_search_maxima,[concat(repertoire,"###.mac")])$
+  batchload("transfo_homog.mac");
+
+/*-----------------------------------------------
+- A MODIFIER matrices de transformation homogenes du modele geometrique direct
+- utiliser les (vos)fonctions
+-  T:rotx(ax);         rotation d'angle ax autour de l'axe xi
+-  T:roty(ay);         rotation d'angle ay autour de l'axe yi
+-  T:rotz(az);         rotation d'angle az autour de l'axe zi
+-  T:trans(Lx,Ly,Lz )  translation de Lx,Ly,Lz respectivement le long des axes Xi,Yi,Zi
+-  Tji:invT(Tij )      matrice de tranformation homogene inverse de Tij
+-  les parametres sont L1,L2,L3,L45 (=L4+L5)
+---------------------------------------------------------------------------------------------*/
+
+  T[0,1]:dh(theta1, 0, d1, %pi/2)$
+  T[1,2]:dh(theta2, 0, 0, %pi/2)$
+  T[2,3]:dh(theta3, 0, d3, -%pi/2)$
+  T[3,4]:dh(theta4, 0, 0, %pi/2)$
+  T[4,5]:dh(theta5, 0, d5, -%pi/2)$
+  T[5,6]:dh(theta6, a6, 0, 0)$
+
+
+/*------------------------------------------------------------------------------
+- A MODIFIER en deduire T16, puis T06
+- effectuer une simplification apres chaque multiplication matricielle
+---------------------------------------------------------------------------*/
+  
+  T[1,3]:trigsimp(T[1,2].T[2,3])$
+  T[3,5]:trigsimp(T[3,4].T[4,5])$
+  T[1,5]:trigsimp(T[1,3].T[3,5])$
+
+  T[1,6]:trigsimp(T[1,5].T[5,6])$
+  T[0,6]:trigsimp(T[0,1].T[1,6])$	
+
+  O[1,6]:getO(T[1,6])$
+  O[0,6]:getO(T[0,6])$
+
+/*------------------------------------------------------------------------------
+- A MODIFIER :
+- Definition manuelle de Td[0,6]=U06
+---------------------------------------------------------------------------*/
+
+  Td[0,6]:matrix([X, X, 0, xp],[X, X, 0, yp],[X, X, -1, zp],[0, 0, 0, 1])$
+
+  Od[0,6]:getO(Td[0,6])$
+
+  subst(list_subst, submatrix(4,Od[0,6]) = submatrix(4,O[0,6]));
+
+  subst(list_subst, getZ(Td[0,6]) = getZ(T[0,6]));
+
+  /*
+    blabla
+  */
+
+/*---------------------------------------------------------------------------
+- A MODIFIER : On en deduit Td[1,7]=U17, en multipliant apr la matrice appropriee
+---------------------------------------------------------------------------*/
+
+  T[1,0]:invT(T[0,1])$
+
+  Td[1,7]:mytrigsimp(T[1,0].Td[0,7])$
+
+  submatrix(3,4,getO(Td[1,7])) = submatrix(3,4,getO(T[1,7]));
+
+  /*----------------*/
+
+  Tdp[1,7]:matrix([X, X, X, xp1],[X, X, X, yp1 = 0],[X, X, X, zp1],[0, 0, 0, 1])$
+
+  submatrix(2,4,getO(Tdp[1,7])) = submatrix(2,4,getO(T[1,7]));
+  
+  /*-------------------*/
+
+  ap : ay1 + ay3 + ay5$
+/*
+	Avec Ai = ay3+ay1 et Ak=ay1, eq de paul de type 8, X = L3, Y = L2, Z1=xp1-L45*sin(ap), Z2=zp1-L45*cos(ap)	
+*/
+
+/*----------------------------------------------------------------------------
+- FIN DE LA PARTIE MAXIMA , EVENTUELLEMENT VOUS POUVEZ AFFICHER( avec des substitutions pour que ce soit plus clair)
+- xp1,yp1,zp1 dans T[1,7]     (dependant de az0 )
+- et xp1,yp1,zp1 dans T[1,7]  (dependant des angles ay1, ay3, ay5)
+----------------------------------------------------------------------------*/
+
+  xp1_az0:Td[1,7][1,4];
+  yp1_az0:Td[1,7][2,4]; 
+  zp1_az0:Td[1,7][3,4];
+  xp1_ay135:T[1,7][1,4]; 
+  yp1_ay135:T[1,7][2,4];
+  zp1_ay135:T[1,7][3,4];
