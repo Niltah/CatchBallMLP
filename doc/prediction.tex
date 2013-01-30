@@ -1,0 +1,35 @@
+Nous avons implémenté un module C++ permettant de calculer et de prédire la trajectoire d'un projectile à partir des données relevées par le système Optitrack.
+
+\subsection{Modèle physique}
+
+Nous nous sommes placé dans le cadre de la mécanique Newtonienne, en considérant notre projectile comme un objet ponctuel, étant uniquement soumis à la force de gravitation terrestre, et en négligeant donc les forces frottements.\\
+
+En considérant un repère orthonormé lié à la salle, dont l'axe z serait vertical, orienté vers le haut, nous avons donc ainsi des équations de trajectoire de la forme suivante :\\
+
+$x = A_xt + B_x$\\
+
+$y = A_yt + B_y$\\
+
+$z = -\frac{1}{2} g t^2 + A_zt + B_z$\\
+
+Ou les $A_i$ et $B_i$ sont des constantes d'intégration qui apparaissent lors du calcul de ces équations, et que nous cherchons donc à déterminer afin de prédire cette trajectoire.\\
+
+Nous avons donc à ce niveau un système de trois équations à six inconnues, il nous faudra donc, d'un point de vue mathématique, et donc sans tenir compte des imprécisions du module de capture, les valeurs de positions du projectile à deux instants différents (ie : deux quadruplets $(x_i, y_i, z_i, t_i)$ ) afin de calculer les valeurs de ces constantes, et donc d'avoir l'équation de trajectoire du projectile. Avec deux tels quadruplets, nous obtenons les valeurs suivantes :\\
+
+$A_x = \frac{x_j-x_i}{t_j-t_i}$\\
+
+$A_y = \frac{y_j-y_i}{t_j-t_i}$\\
+
+$A_z = \frac{(z_j + \frac{1}{2} g t_j^2)-(z_i + \frac{1}{2} g t_i^2)}{t_j-t_i}$\\
+
+$B_x = x_i - A_x t_i$\\
+
+$B_y = y_i - A_y t-i$\\
+
+$B_z = z_i + \frac{1}{2} g t_i^2 - A_z t_i$\\
+
+\subsection{Implémentation pratique}
+
+Néanmoins, dans la pratique, les valeurs relevées par le module de motion tracking ne sont pas des valeurs éxactes. Une imprecision dans la mesure, même faible, peut avoir des répercutions importantes sur les points éloignées d'une trajectoire qui serait modélisée à partir de ces seules mesures.\\
+
+Afin de palier à ce problème, le module de prédiction de trajectoire va effectuer plusieurs calculs des solutions des équations de mouvements, à partir de différents quadruplets de points envoyés par le système de motion tracking, et utiliser pour sa prédiction une moyenne arithmetique non pondérée sur les différentes valeurs ainsi calculées, ce qui nous permet de réduire l'erreur en augmentant le nombre de mesures.

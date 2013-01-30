@@ -39,7 +39,15 @@ Afin de conclure cette introduction nous présentons rapidement le matériel uti
 
 \subsection{Le bras robotique}
 
-Le bras utilisé est un bras anthropomorphe à taille réelle conçu par Rhoban Project. Il dispose de sept servomoteurs Dynamixel immitant le bras humain. Il vient avec une suite logicielle .... TODO
+Le bras utilisé est un bras anthropomorphe à taille réelle conçu par Rhoban Project. Il dispose de sept servomoteurs Dynamixel immitant le bras humain. Il vient avec une suite logicielle conçue par l'équipe de Rhoban Project permettant de le manipuler, qui va consiter en trois éléments : \\
+
+\begin{itemize}
+\item Une interface graphique, RobotBoard, qui permet de créer et d'enregistrer des mouvements, que nous n'utiliserons pas dans ce projet. 
+\item Le RhobanServer qui gère la communication bas niveau avec le matériel
+\item Le SDK Rhoban, qui nous permet d'envoyer des instructions au robot, ainsi que de lire facilement les valeurs prises par les moteurs du robot.\\
+\end{itemize}
+
+C'est le SDK qui sera principalement utilisé pour gérer le déplacement des bras.
 
 \subsection{Le système de capture \og Motion tracking\fg}
 
@@ -84,8 +92,11 @@ Pouet ?
 
 Arena embarque un serveur diffusant les coordonnées du corps rigide. Un client récupérant ces coordonnées existe déjà pour Windows, nous l'avons adapté pour qu'il puisse fonctionner sous Linux et pour l'intégrer à notre Ball catcher. 
 
-\section{Modélisation et prédiction d'impact}
-Victor ...
+\section{Modélisation et Modèle Géométrique Inverse}
+\input{modelisation}
+
+\section{Prédiction de trajectoire}
+\input{prediction}
 
 \section{Représentation 3D de la scène, du bras, de la balle et de sa trajectoire}
 
