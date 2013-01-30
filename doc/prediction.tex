@@ -32,4 +32,6 @@ $B_z = z_i + \frac{1}{2} g t_i^2 - A_z t_i$\\
 
 Néanmoins, dans la pratique, les valeurs relevées par le module de motion tracking ne sont pas des valeurs éxactes. Une imprecision dans la mesure, même faible, peut avoir des répercutions importantes sur les points éloignées d'une trajectoire qui serait modélisée à partir de ces seules mesures.\\
 
-Afin de palier à ce problème, le module de prédiction de trajectoire va effectuer plusieurs calculs des solutions des équations de mouvements, à partir de différents quadruplets de points envoyés par le système de motion tracking, et utiliser pour sa prédiction une moyenne arithmetique non pondérée sur les différentes valeurs ainsi calculées, ce qui nous permet de réduire l'erreur en augmentant le nombre de mesures.
+Afin de palier à ce problème, le module de prédiction de trajectoire va effectuer plusieurs calculs des solutions des équations de mouvements, à partir de différents quadruplets de points envoyés par le système de motion tracking, et utiliser pour sa prédiction une moyenne arithmetique non pondérée sur les différentes valeurs ainsi calculées, ce qui nous permet de réduire l'erreur en augmentant le nombre de mesures. \\
+
+Ainsi, en effectuant un nombre de mesure suffisant avec le système de motion tracking, nous devrions être en mesure d'obtenir une prédiction de trajectoire réaliste.
