@@ -70,19 +70,25 @@ Les trois (ou les six) caméras sont connectées à un hub USB (Optihub) lui-mê
 
 \subsection{Calibration des caméras}
 
-La première étape consiste à calibrer les caméras entre elles. En démarrant l'utilitaire de calibration d'Arena on commence par jouer sur les paramètres ainsi que sur l'orientation des caméras. Selon nos essais, il est préférable d'éviter que les caméras se voient les-unes-les-autres et de choisir une intensité faible pour les LEDs infrarouge : une trop forte intensité augmente le nombre de parasites. Avant de continuer il faut s'assurer qu'aucun point parasite n'est détecté par l'une des caméras en l'abscence de marqueur dans la scène. Les parasites peuvent être des objets réfléchissants ou brillants (fenêtre, lumière, métal ...). Afin de comprendre d'où proviennent les parasites il est utile d'afficher les images noir et blanc renvoyées par les caméras (clic droit sur une frame > Grayscale image). Avant de commencer la calibration aucun parasite ne doit apparaître en l'absence de marqueur et un marqueur placé dans la scène doit être reconnu par les trois caméras. \\
+La première étape consiste à calibrer les caméras entre elles. En démarrant l'utilitaire de calibration d'Arena on commence par jouer sur les paramètres ainsi que sur l'orientation des caméras. Selon nos essais, il est préférable d'éviter que les caméras se voient les-unes-les-autres et de choisir une intensité faible pour les LEDs infrarouge : une trop forte intensité augmente le nombre de parasites. Avant de continuer il faut s'assurer qu'aucun point parasite n'est détecté par l'une des caméras en l'abscence de marqueur dans la scène. Les parasites peuvent être des objets réfléchissants ou brillants (fenêtre, lumière, métal ...). Afin de comprendre d'où proviennent les parasites il est utile d'afficher les images noir et blanc renvoyées par les caméras (clic droit sur une frame puis Grayscale image). Avant de commencer la calibration aucun parasite ne doit apparaître en l'absence de marqueur et un marqueur placé dans la scène doit être reconnu par les trois caméras. \\
 
 L'étape de calibration peut ensuite commencer. Il s'agit de déplacer trois marqueurs au bout d'une baguette Optiwand pour couvrir au maximum le volume de la scène dans un maximum d'orientations possibles. Toutes les caméras doivent visualiser les marqueurs pour que les points puissent participer à la calibration. A l'issue du processus de calcul Arena est capable de disposer les caméras dans l'espace les unes par rapport aux autres sur une carte. \\
+
+Il faut ensuite placer le repère (représenté par une équerre en métal sur laquelle sont disposés trois marqueurs) afin de définir l'origine et l'orientation des axes du repère.\\
 
 Note : la licence Arena a été enregistrée pour la caméra 179282. Cette caméra doit donc impérativement être branchée pour démarrer Arena.
 
 \subsection{Constitution d'un Corps Rigide}
 
-Pouet ?
+Une fois les caméra calibrées, il est important de créer un corps rigide.
+Un corps rigide représente un ensemble de points ne bougeant pas les uns par rapport aux autres. Cela nous permet de reconnaître facilement les points intéressant (comme les trois marqueurs de la baguette de calibration). De plus, il est impératif d'avoir un corps rigide afin de pouvoir transférer les positions à un programme tiers. La création d'un corps rigide se fait facilement en faisant bouger les marqueurs de l'objet dans le champs de vision des caméras.
 
 \subsection{Exportation des coordonnées}
 
-Arena embarque un serveur diffusant les coordonnées du corps rigide. Un client récupérant ces coordonnées existe déjà pour Windows, nous l'avons adapté pour qu'il puisse fonctionner sous Linux et pour l'intégrer à notre Ball catcher. 
+Arena embarque un serveur diffusant les coordonnées du corps rigide, apellé NatNet. Un client récupérant ces coordonnées existe déjà pour Windows, nous l'avons adapté pour qu'il puisse fonctionner sous Linux et pour l'intégrer à notre Ball catcher. 
+
+\subsection{Calcul de l'erreur sur les coordonnées}
+Afin de connaître la précision du système de motion tracking, nous avons mesuré l'écart entre deux marqueurs avec une règle, puis avec les coordonnées récupérées depuis le logiciel optitrack. En moyenne, on obtient une erreur de 3 millimètres tout les 25 centimètres 
 
 \section{Modélisation et prédiction d'impact}
 Victor ...
