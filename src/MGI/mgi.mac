@@ -4,33 +4,25 @@
 
   kill(all);
   repertoire :"./"$ 
-/* A MODIFIER :repertoire de votre fichier tr_homogene.mac */
+
   file_search_maxima: append (file_search_maxima,[concat(repertoire,"###.mac")])$
   batchload("transfo_homog.mac");
 
 /*-----------------------------------------------
-- A MODIFIER matrices de transformation homogenes du modele geometrique direct
-- utiliser les (vos)fonctions
--  T:rotx(ax);         rotation d'angle ax autour de l'axe xi
--  T:roty(ay);         rotation d'angle ay autour de l'axe yi
--  T:rotz(az);         rotation d'angle az autour de l'axe zi
--  T:trans(Lx,Ly,Lz )  translation de Lx,Ly,Lz respectivement le long des axes Xi,Yi,Zi
--  Tji:invT(Tij )      matrice de tranformation homogene inverse de Tij
--  les parametres sont L1,L2,L3,L45 (=L4+L5)
+- matrices de transformation homogenes du modele geometrique direct
 ---------------------------------------------------------------------------------------------*/
 
-  T[0,1]:dh(theta1, 0, d1, %pi/2)$
+  T[0,1]:dh(theta1, 0, 0, %pi/2)$ /* d1 = 0 */
   T[1,2]:dh(theta2, 0, 0, %pi/2)$
   T[2,3]:dh(theta3, 0, d3, -%pi/2)$
   T[3,4]:dh(theta4, 0, 0, %pi/2)$
   T[4,5]:dh(theta5, 0, d5, -%pi/2)$
-  T[5,6]:dh(theta6, 0, 0, %pi/2)$
-  T[6,7]:dh(theta7, 0, d7, 0)$
+  T[5,6]:dh(theta6, 0, 0, %pi/2)$ /* a6 = 0 */
+  T[6,7]:dh(theta7, a7, 0, 0)$
 
 
 /*------------------------------------------------------------------------------
-- A MODIFIER en deduire T16, puis T06
-- effectuer une simplification apres chaque multiplication matricielle
+- Quelques matrices utiles
 ---------------------------------------------------------------------------*/
   
   T[1,3]:trigsimp(T[1,2].T[2,3])$
@@ -39,92 +31,121 @@
   T[1,5]:trigsimp(T[1,3].T[3,5])$
 
   T[1,7]:trigsimp(T[1,5].T[5,7])$
-  T[0,7]:trigsimp(T[0,1].T[1,7])$	
+  T[0,7]:trigsimp(T[0,1].T[1,7])$
 
   T[3,6]:trigsimp(T[3,5].T[5,6])$
+  T[6,3]:trigsimp(invT(T[3,6]))$
   T[0,3]:trigsimp(T[0,1].T[1,3])$
   T[3,0]:trigsimp(invT(T[0,3]))$
+  T[0,4]:trigsimp(T[0,3].T[3,4])$
+  T[4,0]:trigsimp(invT(T[0,4]))$
   T[2,6]:trigsimp(T[2,3].T[3,6])$
+  T[6,2]:trigsimp(invT(T[2,6]))$
   T[0,2]:trigsimp(T[0,1].T[1,2])$
   T[2,0]:trigsimp(invT(T[0,2]))$
 
   T[4,7]:trigsimp(T[4,5].T[5,7])$
   T[7,4]:trigsimp(invT(T[4,7]))$
+  T[7,5]:trigsimp(invT(T[5,7]))$
 
+  T[7,6]:trigsimp(invT(T[6,7]))$
+  T[3,7]:trigsimp(T[3,6].T[6,7])$
+
+  T[0,5]:trigsimp(T[0,1].T[1,5])$
+  T[0,6]:trigsimp(T[0,5].T[5,6])$
+  T[2,4]:trigsimp(T[2,3].T[3,4])$
+  T[4,6]:trigsimp(T[4,5].T[5,6])$
+  T[2,7]:trigsimp(T[2,6].T[6,7])$
+
+  O[0,2]:getO(T[0,2])$
+  O[2,4]:getO(T[2,4])$
+  O[4,6]:getO(T[4,6])$
   O[1,7]:getO(T[1,7])$
+  O[0,6]:getO(T[0,6])$
   O[0,7]:getO(T[0,7])$
+  O[2,7]:getO(T[2,7])$
+
+  O[3,4]:getO(T[3,4])$
+  O[6,2]:getO(T[6,2])$
+  O[6,3]:getO(T[6,3])$
+  O[4,7]:getO(T[4,7])$
+  O[4,5]:getO(T[4,5])$
+  O[3,7]:getO(T[3,7])$
+  O[3,6]:getO(T[3,6])$
+  O[3,5]:getO(T[3,5])$
+  O[2,6]:getO(T[2,6])$
+  O[2,5]:getO(T[2,5])$
 
 /*------------------------------------------------------------------------------
-- A MODIFIER :
-- Definition manuelle de Td[0,6]=U06
+ Matrice de position désirée
 ---------------------------------------------------------------------------*/
-	/*
+  /*
   Td[0,7]:matrix([X, X, X, xp],[X, X, X, yp],[X, X, X	, zp],[0, 0, 0, 1])$
   */
-  Td[0,7]:matrix([X, X, 0, xp],[X, X, 0, yp],[X, X, -1, zp],[0, 0, 0, 1])$
-  
-  
+
+  Td[0,7]:matrix([xxd, yxd, zxd, xp],[yxd, yyd,  yzd, yp],[zxd, yzd, zzd, zp],[0, 0, 0, 1])$
+
   Od[0,7]:getO(Td[0,7])$
+  
+  
+/*------------------------------------------------------------------------------
+ Calculs et affichage d'équations
+---------------------------------------------------------------------------*/
 
-  subst(list_subst, submatrix(4,Od[0,7]) = submatrix(4,O[0,7]));
+  Td[0,6]:trigsimp(Td[0,7].T[7,6])$
+  Od[0,6]:getO(Td[0,6])$
+  Td[0,5]:trigsimp(Td[0,7].T[7,5])$
+  Od[0,5]:getO(Td[0,5])$
+  Td[0,4]:trigsimp(Td[0,7].T[7,4])$
+  Od[0,4]:getO(Td[0,4])$
+  
+  
+  subst(list_subst, O[0,2]);	
+  subst(list_subst, O[2,4]);
+  subst(list_subst, O[4,6]);
+  subst(list_subst, Od[0,6]);
+  print("On peut ainsi fixer theta4 grace au triangle O2-O4-O6");
 
-  subst(list_subst, getZ(Td[0,7]) = getZ(T[0,7]));
+  print("On a encore 1 degré de liberté, on fixe theta3 arbitrairement");
 
-  O[3,6]:getO(T[3,6]);
+  subst(list_subst, submatrix(1,3,4,O[2,6]) = trigsimp(submatrix(1,3,4,T[2,0].Od[0,6])));
+  print("Equation de Paul de type 2, on en tire theta1");
 
-  Od[0,6]:matrix([x06],[y06],[z06],[1])$
-
-  subst(list_subst, O[3,6] = T[3,0].Od[0,6]);
-
-  O[2,6]:getO(T[2,6]);
-
-
-  subst(list_subst, O[2,6] = T[2,0].Od[0,6]);
-
-
-  T[4,7];
-
-
+  subst(list_subst, submatrix(2,4,O[2,6]) = trigsimp(submatrix(2,4,T[2,0].Od[0,6])));
+  print("Equation de Paule de type 2, on en tire theta2");
 
   
+  Td[4,7]:trigsimp(T[4,0].Td[0,7])$
+  subst(list_subst, T[4,7] = Td[4,7])$
+  subst(list_subst, submatrix(1,2,4,T[4,7],1,2,4) = submatrix(1,2,4,Td[4,7],1,2,4));
+  print("On en déduit theta6");
 
+  subst(list_subst, submatrix(1,2,4,T[4,7],2,3,4) = submatrix(1,2,4,Td[4,7],2,3,4));
+  print("On en déduit theta7");
 
-  /*
-    blabla
-  */
+  subst(list_subst, submatrix(1,3,4,T[4,7],1,2,4) = submatrix(1,3,4,Td[4,7],1,2,4));
+  print("On en déduit theta 5");
 
-/*---------------------------------------------------------------------------
-- A MODIFIER : On en deduit Td[1,7]=U17, en multipliant apr la matrice appropriee
+ 
+/*------------------------------------------------------------------------------
+  Recapitulatif des equations
 ---------------------------------------------------------------------------*/
-/*
-  T[1,0]:invT(T[0,1])$
 
-  Td[1,7]:mytrigsimp(T[1,0].Td[0,7])$
+  print("theta 4 = 2*arcsin(sqrt(( xp - a7 xxd )² + ( yp - a7 yxd )² + (zp - a7 zxd )²)/2*d5)");
+ 
+  print("theta3 fixé arbitrairement");
+  
+  subst(list_subst, submatrix(1,3,4,O[2,6]) = trigsimp(submatrix(1,3,4,T[2,0].Od[0,6])));
+  print("Equation de Paul de type 2, on en tire theta1");
 
-  submatrix(3,4,getO(Td[1,7])) = submatrix(3,4,getO(T[1,7]));
-*/
-  /*----------------*/
-/*
-  Tdp[1,7]:matrix([X, X, X, xp1],[X, X, X, yp1 = 0],[X, X, X, zp1],[0, 0, 0, 1])$
+  subst(list_subst, submatrix(2,4,O[2,6]) = trigsimp(submatrix(2,4,T[2,0].Od[0,6])));
+  print("Equation de Paule de type 2, on en tire theta2");
+  
+  subst(list_subst, submatrix(1,2,4,T[4,7],1,2,4) = submatrix(1,2,4,Td[4,7],1,2,4));
+  print("On en déduit theta6");
 
-  submatrix(2,4,getO(Tdp[1,7])) = submatrix(2,4,getO(T[1,7]));
-  */
-  /*-------------------*/
-/*
-  ap : ay1 + ay3 + ay5$*/
-/*
-	Avec Ai = ay3+ay1 et Ak=ay1, eq de paul de type 8, X = L3, Y = L2, Z1=xp1-L45*sin(ap), Z2=zp1-L45*cos(ap)	
-*/
+  subst(list_subst, submatrix(1,2,4,T[4,7],2,3,4) = submatrix(1,2,4,Td[4,7],2,3,4));
+  print("On en déduit theta7");
 
-/*----------------------------------------------------------------------------
-- FIN DE LA PARTIE MAXIMA , EVENTUELLEMENT VOUS POUVEZ AFFICHER( avec des substitutions pour que ce soit plus clair)
-- xp1,yp1,zp1 dans T[1,7]     (dependant de az0 )
-- et xp1,yp1,zp1 dans T[1,7]  (dependant des angles ay1, ay3, ay5)
-----------------------------------------------------------------------------*/
-/*
-  xp1_az0:Td[1,7][1,4];
-  yp1_az0:Td[1,7][2,4]; 
-  zp1_az0:Td[1,7][3,4];
-  xp1_ay135:T[1,7][1,4]; 
-  yp1_ay135:T[1,7][2,4];
-  zp1_ay135:T[1,7][3,4];*/
+  subst(list_subst, submatrix(1,3,4,T[4,7],1,2,4) = submatrix(1,3,4,Td[4,7],1,2,4));
+  print("On en déduit theta 5");

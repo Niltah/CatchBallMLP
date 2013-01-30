@@ -13,6 +13,8 @@ Trajectory::Trajectory()
   B.push_back(0);
   B.push_back(0);
   B.push_back(0);
+
+  counter = 0;
 }
 
 Trajectory::~Trajectory()
@@ -59,19 +61,21 @@ void Trajectory::computeTrajectory(PositionBalle *p1, PositionBalle *p2)
       float y2 = P2[1];
       float z2 = P2[2];
 
-      A.push_back((x2-x1)/(t2-t1));
-      B.push_back(x1-A[0]*t1);
 
-      A.push_back((y2-y1)/(t2-t1));
-      B.push_back(y1-A[1]*t1);
+      A[0] = ((A[0]*counter) + ((x2-x1)/(t2-t1))) / (counter+1);
+      B[0] = ((B[0]*counter) + (x1-A[0]*t1)) / (counter+1);
+
+      A[1] = ((A[1]*counter) + ((y2-y1)/(t2-t1))) / (counter+1);
+      B[1] = ((B[1]*counter) + (y1-A[1]*t1)) / (counter+1);
 
       float Z1 = z1 + (G_VALUE*t1*t1/2);
       float Z2 = z2 + (G_VALUE*t2*t2/2);
 
-      A.push_back((Z2-Z1)/(t2-t1));
-      B.push_back(Z1-A[2]*t1);
+      A[2] = ((A[2]*counter) + ((Z2-Z1)/(t2-t1))) / (counter+1);
+      B[2] = ((B[2]*counter) + (Z1-A[2]*t1)) / (counter+1);
 
       computed = 1;
+      counter++;
     }
 }
 

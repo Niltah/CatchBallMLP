@@ -34,6 +34,7 @@ class Trajectory
   int computed;
   vector<float> A;
   vector<float> B;
+  int counter;
 };
 
 #endif // TRAJECTORY_H

@@ -1,4 +1,4 @@
-list_subst:[cos(theta1) = c1, cos(theta2) = c2, cos(theta3) = c3, cos(theta4) = c4, cos(theta5) = c5, cos(theta6) = c6, sin(theta1) = s1, sin(theta2) = s2, sin(theta3) = s3, sin(theta4) = s4, sin(theta5) = s5, sin(theta6) = s6, cos(theta2 + theta1) = c12, sin(theta2 + theta1) = s12]$
+list_subst:[cos(theta1) = c1, cos(theta2) = c2, cos(theta3) = c3, cos(theta4) = c4, cos(theta5) = c5, cos(theta6) = c6, sin(theta1) = s1, sin(theta2) = s2, sin(theta3) = s3, sin(theta4) = s4, sin(theta5) = s5, sin(theta6) = s6, cos(theta2 + theta1) = c12, sin(theta2 + theta1) = s12, cos(theta7) = c7, sin(theta7) = s7]$
 
 rotx(th):=matrix(
 	[1, 0, 0, 0],
