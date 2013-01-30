@@ -33,7 +33,11 @@ float Mgi::getTheta1(){
       cout << "Pas de solution" << endl;
       return 0;
     }
-  
+
+  theta1 = radianToDegree(S.Ai[0]);
+
+  if(!testAngleValue(theta1, 1))
+    theta1 = radianToDegree(S.Ai[1]);  
 
   return theta1;
 }
@@ -58,7 +62,7 @@ float Mgi::getTheta4()
 
   theta4 = radianToDegree(theta4);
 
-  //  if(testAngleValue(theta4, 4))
+  //  if(!testAngleValue(theta4, 4))
   //theta4 = 180-theta4;
 
   return theta4;
@@ -88,5 +92,5 @@ float Mgi::radianToDegree(float theta)
 
 int Mgi::testAngleValue(float theta, int i)
 {
-  return(theta < min_val[i] || theta > max_val[i]);
+  return(theta > min_val[i] && theta < max_val[i]);
 }
