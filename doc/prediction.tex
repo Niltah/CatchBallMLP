@@ -14,7 +14,9 @@ $z = -\frac{1}{2} g t^2 + A_zt + B_z$\\
 
 Ou les $A_i$ et $B_i$ sont des constantes d'intégration qui apparaissent lors du calcul de ces équations, et que nous cherchons donc à déterminer afin de prédire cette trajectoire.\\
 
-Nous avons donc à ce niveau un système de trois équations à six inconnues, il nous faudra donc, d'un point de vue mathématique, et donc sans tenir compte des imprécisions du module de capture, les valeurs de positions du projectile à deux instants différents (ie : deux quadruplets $(x_i, y_i, z_i, t_i)$ ) afin de calculer les valeurs de ces constantes, et donc d'avoir l'équation de trajectoire du projectile. Avec deux tels quadruplets, nous obtenons les valeurs suivantes :\\
+Nous avons donc à ce niveau un système de trois équations à six inconnues, il nous faudra donc, d'un point de vue mathématique, et donc sans tenir compte des imprécisions du module de capture, les valeurs de positions du projectile à deux instants différents (ie : deux quadruplets $(x_i, y_i, z_i, t_i)$ ) afin de calculer les valeurs de ces constantes, et donc d'avoir l'équation de trajectoire du projectile.
+\newpage
+Avec deux tels quadruplets, nous obtenons les valeurs suivantes :\\
 
 $A_x = \frac{x_j-x_i}{t_j-t_i}$\\
 
@@ -35,3 +37,4 @@ Néanmoins, dans la pratique, les valeurs relevées par le module de motion trac
 Afin de palier à ce problème, le module de prédiction de trajectoire va effectuer plusieurs calculs des solutions des équations de mouvements, à partir de différents quadruplets de points envoyés par le système de motion tracking, et utiliser pour sa prédiction une moyenne arithmetique non pondérée sur les différentes valeurs ainsi calculées, ce qui nous permet de réduire l'erreur en augmentant le nombre de mesures. \\
 
 Ainsi, en effectuant un nombre de mesure suffisant avec le système de motion tracking, nous devrions être en mesure d'obtenir une prédiction de trajectoire réaliste.
+\newpage

@@ -12,8 +12,8 @@ Afin de modéliser le bras, nous avons nommé les moteurs de la façon suivante 
 	\end{center}
 \end{figure}
 
-La première étape de la modélisation a été de mettre en place une paramétrisation de Denavit-Hartenberg, qui nous permet de déterminer un repère différent lié à chacun des moteurs, afin de pouvoir récupérer ensuite des équations éxploitables pour la détermination du modèle géométrique inverse.\\
-
+La première étape de la modélisation a été de mettre en place une paramétrisation de Denavit-Hartenberg, qui nous permet de déterminer un repère différent lié à chacun des moteurs, afin de pouvoir récupérer ensuite des équations éxploitables pour la détermination du modèle géométrique inverse.
+\newpage
 La représentation en question est la suivante :\\
 
 \begin{figure}[!htc]
@@ -43,7 +43,6 @@ i, i+1 & $Rot_{zi}$ & $Trans_{xi+1}$ & $Trans_{zi}$ & $Rot_{xi+1}$\\
 6, 7 & $\theta_7^*$ & a7 = -9 cm & / & / \\
 \hline
 \end{tabular}
-\\
 
 Une fois cette représentation terminée, nous pouvons commencer l'implémentation de la détermination d'un modèle géométique inverse.
 
@@ -55,9 +54,10 @@ Pour ce faire, nous avons utilisé le logiciel libre de calcul formel Maxima, da
 
 Constatons que pour une orientation et une position fixée de la main, bien qu'il y ait une infinité de positions du bras qui soient compatibles, la valeur de l'angle du moteur 4 reste elle toujours identique. De plus, nous savons que la distance entre le centre du moteur 2 et le centre du moteur 4 est fixe, dépendante des caractéristique du robot, égale à d3. Il en va de même pour la distance entre les centres des moteurs 4 et 6, qui vaut d5.\\
 
-De plus, pour une position et une orientation fixe de la main, le centre du moteur 6 est lui aussi déterminé, et immobile dans le repère 0. Le centre du moteur 2 étant l'origine de ce repère 0, la position désirée de l'effecteur nous donne connue la position du centre de ce moteur 6, et donc la distance entre les centres des moteurs 2 et 6.\\
+De plus, pour une position et une orientation fixe de la main, le centre du moteur 6 est lui aussi déterminé, et immobile dans le repère 0. Le centre du moteur 2 étant l'origine de ce repère 0, la position désirée de l'effecteur nous donne connue la position du centre de ce moteur 6, et donc la distance entre les centres des moteurs 2 et 6.
+\newpage
 
-Nous avons donc ainsi un triangle formés par les centres des moteurs 2, 4 et 6, dont nous connaissons les longueurs et côtés, ce qui nous permet ainsi de déterminer la valeur de l'angle du moteur 4 selon les paramètre imposés par la position désirée de la main.\\
+Nous avons donc ainsi un triangle formé par les centres des moteurs 2, 4 et 6, dont nous connaissons les longueurs et côtés, ce qui nous permet ainsi de déterminer la valeur de l'angle du moteur 4 selon les paramètre imposés par la position désirée de la main.\\
 
 Arrivé à ce niveau la, nous avons donc 6 valeurs à déterminer, pour lesquelles nous avons 1 degré le liberté. Nous faisons le choix arbitraire d'imposer la valeur du moteur 3 (choisi du fait que le moteur 5 permet une liberté suffisante dans le déplacement malgré une immobilisation du moteur 3), ce qui nous fige le système.\\
 
@@ -67,10 +67,16 @@ Après quoi, nous utilisons maxima pour obtenir des équations sur les angles de
 \item $\theta_4$ est connu, déterminé précédemment via la méthode du triangle.
 \item $\theta_3$ est fixée arbitrairement.
 \item L'expression de l'égalité $O_{2, 6} = T_{2, 0} . Od_{0, 6}$ nous donne deux équations de Paul de type 2 nous permettant de déterminer respectivement $\theta_1$ et  $\theta_2$
-\item L'expression de l'égalité $T_{4, 7} = Td_{4, 7}$ nous permet enfin de récupérer trois équations qui nous donneront les valeurs de $\theta_5$, $\theta_6$ et $\theta_7$
-\end{itemize}\\
+\item L'expression de l'égalité $T_{4, 7} = Td_{4, 7}$ nous permet enfin de récupérer trois équations qui nous donneront les valeurs de $\theta_5$, $\theta_6$ et $\theta_7$\\
+
+\end{itemize}
 
 Nous avons donc, à ce niveau, fixé arbitrairement la valeur de M3, et déterminé six équations nous permettant de déterminer les valeurs des moteurs restants.
 
-\submatrix{Résolution des équations du modèle géométrique inverse}
+\subsection{Résolution des équations du modèle géométrique inverse}
 
+Nous avons ensuite entamé l'implémentation d'un module du code C++ qui nous permettra de résoudre ces équations, afin d'obtenir les valeurs angulaires à passer effectivement au robot afin que la main se place dans une position $(x, y, z)$ voulue.\\
+
+Les équations à résoudre par ce module sont toutes des équations de Paul de type 2 ou des équations triginométriques, qui auront toutes, dans le cas ou l'équation est bien posée, et dans le cas général, deux solutions distinctes, toutes deux mathématiquement correctes, mais dont seule une sera applicable sur le robot. Ainsi, il est necéssaire pour ce module de tester les valeurs renvoyées par les fonctions de résolution d'équations afin de savoir quelle valeure garder, et pour se faire, de récupérer toutes les valeurs minimales et maximales pouvant être prises par les différents moteurs composant le bras.
+\newpage
+Faute de temps, l'implémentation de ce module n'a pas pu être terminée, néanmoins, nous disposons de tous les éléments nécessaires à son implémentation, et n'est donc pas fonctionnelle uniquement par manque de temps.
