@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 Nous avons implémenté un module C++ permettant de calculer et de prédire la trajectoire d'un projectile à partir des données relevées par le système Optitrack.
+=======
+Le module suivant est également intégré dans la partie "Calcul d'Impact", il permet de calculer et de prédire la trajectoire d'un projectile à partir des données relevées par le système Optitrack.
+>>>>>>> 30c2422cf352727868de7aa5bca667e4d0f973c8
 
 \subsection{Modèle physique}
 
@@ -32,9 +36,15 @@ $B_z = z_i + \frac{1}{2} g t_i^2 - A_z t_i$\\
 
 \subsection{Implémentation pratique}
 
+<<<<<<< HEAD
 Néanmoins, dans la pratique, les valeurs relevées par le module de motion tracking ne sont pas des valeurs éxactes. Une imprecision dans la mesure, même faible, peut avoir des répercutions importantes sur les points éloignées d'une trajectoire qui serait modélisée à partir de ces seules mesures.\\
 
 Afin de palier à ce problème, le module de prédiction de trajectoire va effectuer plusieurs calculs des solutions des équations de mouvements, à partir de différents quadruplets de points envoyés par le système de motion tracking, et utiliser pour sa prédiction une moyenne arithmetique non pondérée sur les différentes valeurs ainsi calculées, ce qui nous permet de réduire l'erreur en augmentant le nombre de mesures. \\
+=======
+Néanmoins, dans la pratique, les valeurs relevées par le module de motion tracking ne sont pas des valeurs exactes. Une imprécision dans la mesure, même faible, peut avoir des répercutions importantes sur les points éloignés d'une trajectoire qui serait modélisée à partir de ces seules mesures.\\
+
+Afin de palier à ce problème, le module de prédiction de trajectoire va effectuer plusieurs calculs des solutions des équations de mouvements. Ceci à partir de différents quadruplets de points envoyés par le système de motion tracking. IL va également utiliser pour sa prédiction une moyenne arithmetique non pondérée sur les différentes valeurs ainsi calculées, ce qui nous permet de réduire l'erreur en augmentant le nombre de mesures. \\
+>>>>>>> 30c2422cf352727868de7aa5bca667e4d0f973c8
 
 Ainsi, en effectuant un nombre de mesure suffisant avec le système de motion tracking, nous devrions être en mesure d'obtenir une prédiction de trajectoire réaliste.
 \newpage

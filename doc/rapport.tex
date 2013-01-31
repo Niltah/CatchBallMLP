@@ -11,7 +11,7 @@
 
 \Large
 
-\title{Projet robotique autonome : \textbf{My Little Pony Ball catcher}}
+\title{Projet robotique autonome :\\ \textbf{MLP Ball catcher}}
 
 \author{Victor Cheimanoff, Thibaud Cheippe, Yoan Mollard}
 
@@ -54,16 +54,78 @@ Le système de capture utilisé est composé de trois caméras Optitrack VX1000.
 \begin{figure}[!htc]
 	\begin{center}
 		\includegraphics[scale=0.5]{images/general.png}
-		\caption{Schéma de la scène : bras accompagné des trois caméras capturant le début de la trajectoire} 
+		\caption{Schéma de la scène : bras accompagné des trois caméras et leur champs de vision, balle et sa trajectoire, le serveur Windows sur lequel foncitonne Arena et auquel sont connectées les caméras et le client Linux composé de trois modules et pilotant directement le bras}
 		\label{general}
 	\end{center}
 \end{figure}
+
+\section{Découpage du projet}
 
 Nous avons décomposé le projet en trois parties distinctes :
 \begin{itemize}
 \item La mise en place du système de capture Optitrack de manière à obtenir les coordonnées x, y, z d'un point de l'espace
 \item L'obtention du modèle géométrique inverse du robot, le calcul de la trajectoire de la balle et la planification du point d'impact
-\item La réalisation d'une représentation OpenGL de la scène pour visualiser 
+\item La représentation 3D (OpenGL) de la scène pour visualiser la trajectoire calculée, le point d'impact choisi et éventuellement la configuration du robot \\
+\end{itemize}
+
+\subsection{Trois exécutables distincts}
+
+L'idée est de conserver ces trois parties indépendantes dans trois exécutables différents, puis de les faire communiquer sur leurs entrées et sorties standard en utilisant un protocole texte très simple. Les trois exécutables sont :
+\begin{itemize}
+\item Le client récupérant les coordonnées diffusées par Arena (Client/Data Streaming)
+\item Le calculateur de la trajectoire de la balle planifiant le point d'impact (Impact)
+\item L'affichage en temps réel (Viewer) \\
+\end{itemize}
+
+Ce découpage est représenté sur la figure \ref{general}. On lance ainsi le programme final en redirigeant les sorties au bon exécutable :
+\begin{verbatim}
+~$ ./Client | ./Impact | ./Viewer
+\end{verbatim}
+
+\begin{figure}[!htc]
+	\begin{center}
+		\includegraphics[scale=0.5]{images/tout.png}
+		\caption{Découpage de l'application en trois modules : données Arena en entrée et commande du robot en sortie} 
+		\label{general}
+	\end{center}
+\end{figure}
+
+\subsection{Le protocole}
+
+Il est nécessaire de définir un protocole basique de communication entre les trois exécutables. Bien qu'il n'ait pas encore été spécifié, voici un exemple de ce qui pourrait être utilisé : \\
+\begin{itemize}
+\item Entre le client et le calculateur, on transmet pour chaque instant t les coordonnées x, y, z de la balle dans le repère de la scène sur une nouvelle ligne : \\
+\begin{verbatim}
+t      x      y      z
+\end{verbatim}
+Par exemple :
+\begin{verbatim}
+0.01   45.3   24.8   176.4
+0.02   45.9   23.9   174.2
+0.03   47.5   24.1   171.7
+0.04   51.0   23.2   167.9
+...    ...    ...    ...
+\end{verbatim}
+
+\item
+\item Entre le calculateur et le visualisateur, on inclue les précédents relevés $t, x, y, z$ de position de la balle ainsi que les paramètres de trajectoires $A_x$, $A_y$, $A_z$, $B_x$, $B_y$, $B_z$. On identifie une trajectoire grâce à un entier "id" pour pouvoir aisément la mettre à jour lors de l'obtention d'un nouveau point :
+\begin{verbatim}
+t       x      y      z
+id      ax     ay     az     bx     by     bz      // Mise à jour ou création
+                                                   // de la trajectoire numéro "id"
+\end{verbatim}
+Par exemple :
+\begin{verbatim}
+0.01   45.3   24.8   176.4
+0.02   45.9   23.9   174.2
+0.03   47.5   24.1   171.7
+0.04   51.0   23.2   167.9
+1      18.6   34.8   44.9    33.12  178.6  8.7    // Création de la trajectoire 1
+0.05   42."   24.9   170.3
+0.06   51.7   23.4   167.2
+1      17.6   34.8   44.9    33.12  178.6  8.7    // Mise à jour de la trajectoire 1
+0.07   49.9   23.9   176.2
+\end{verbatim}
 \end{itemize}
 
 \section{Exportation des coordonnées d'un point avec Optitrack}
@@ -80,12 +142,17 @@ La première étape consiste à calibrer les caméras entre elles. En démarrant
 
 L'étape de calibration peut ensuite commencer. Il s'agit de déplacer trois marqueurs au bout d'une baguette Optiwand pour couvrir au maximum le volume de la scène dans un maximum d'orientations possibles. Toutes les caméras doivent visualiser les marqueurs pour que les points puissent participer à la calibration. A l'issue du processus de calcul Arena est capable de disposer les caméras dans l'espace les unes par rapport aux autres sur une carte. 
 \newpage
+<<<<<<< HEAD
 Il faut ensuite placer le repère (représenté par une équerre en métal sur laquelle sont disposés trois marqueurs) afin de définir l'origine et l'orientation des axes du repère.\\
+=======
+Il faut ensuite placer le repère (représenté par une équerre en métal sur laquelle sont disposés trois marqueurs) afin de définir l'origine et l'orientation des axes du repère. La calibration est ainsi terminée et Arena peut afficher la position d'un marqueur dans l'espace.\\
+>>>>>>> 30c2422cf352727868de7aa5bca667e4d0f973c8
 
 Note : la licence Arena a été enregistrée pour la caméra 179282. Cette caméra doit donc impérativement être branchée pour démarrer Arena.
 
 \subsection{Constitution d'un Corps Rigide}
 
+<<<<<<< HEAD
 Une fois les caméra calibrées, il est important de créer un corps rigide.
 Un corps rigide représente un ensemble de points ne bougeant pas les uns par rapport aux autres. Cela nous permet de reconnaître facilement les points intéressant (comme les trois marqueurs de la baguette de calibration). De plus, il est impératif d'avoir un corps rigide afin de pouvoir transférer les positions à un programme tiers. La création d'un corps rigide se fait facilement en faisant bouger les marqueurs de l'objet dans le champs de vision des caméras.
 
@@ -99,24 +166,59 @@ Afin de connaître la précision du système de motion tracking, nous avons mesu
 \section{Modélisation et Modèle Géométrique Inverse}
 \input{modelisation}
 
+=======
+Une fois les caméra calibrées, il est important de créer un corps rigide pusiqu'il s'agit a priori du seul moyen d'exporter les coordonnées des points capturés. \\
+
+Un corps rigide représente un ensemble de points ne bougeant pas les uns par rapport aux autres. Cela nous permet de reconnaître facilement les points intéressants (comme les trois marqueurs de la baguette de calibration). De plus, il est impératif d'avoir un corps rigide afin de pouvoir transférer les positions à un programme tiers. La création d'un corps rigide se fait facilement en faisant bouger les marqueurs de l'objet dans le champs de vision des caméras.
+
+\subsection{Exportation des coordonnées}
+
+Arena embarque un serveur diffusant les coordonnées du corps rigide, apellé NatNet. Un client récupérant ces coordonnées existe déjà pour Windows, nous l'avons adapté pour qu'il puisse fonctionner sous Linux et pour l'intégrer à notre Ball catcher. Il correspond à la partie "Client" dans notre découpage.
+
+\subsection{Calcul de l'erreur sur les coordonnées}
+Afin de connaître la précision du système de motion tracking, nous avons mesuré l'écart entre deux marqueurs avec une règle, puis avec les coordonnées récupérées depuis le logiciel Arena. En moyenne, on obtient une erreur de 3 millimètres tous les 25 centimètres 
+\newpage
+\section{Modélisation et Modèle Géométrique Inverse}
+\input{modelisation}
+
+>>>>>>> 30c2422cf352727868de7aa5bca667e4d0f973c8
 \section{Prédiction de trajectoire}
 \input{prediction}
 
 \section{Représentation 3D de la scène, du bras, de la balle et de sa trajectoire}
 
-Nous avons ajouté au projet un visualisateur 3D pour représenter la scène. L'intérêt est de pouvoir remplacer le bras matériel par un bras simulé et d'afficher les résultats théoriques. Le minimum, et de loin le plus important est de représenter le système de coordonnées de la scène (défini par le Calibration Square), la trajectoire prévue et affinée à chaque instant, et le point d'impact calculé. \\
+Nous avons ajouté au projet un dernier module "visualisateur 3D" dont le rôle est de représenter la scène en 3D en temps réelle. Le minimum, et de loin le plus important est de représenter le système de coordonnées de la scène (défini par le Calibration Square), la trajectoire prévue et affinée à chaque instant, et le point d'impact calculé. \\
 
-Les trois fichiers \textit{main}, \textit{window} et \textit{glwidget} s'occupent du fonctionnement global de l'application, de la fenêtre, et du composant OpenGL. La scène est dessinée dans $GLWidget::paintGL()$, méthode appelée à chaque rafraichissement de l'image. Les éléments de la scène (balle, sol, mur, robot ...) sont déclarés dans l'en-tête de GLWidget et dessinés dans cette méthode $paintGL()$. Les éléments affichables sont :\\
+Le visualisateur utilise les bibilothèques OpenGL et GLUT pour QT. Les trois fichiers \textit{main}, \textit{window} et \textit{glwidget} s'occupent du fonctionnement global de l'application, de la fenêtre, et du composant OpenGL. Ils sont issus d'un exemple de QT pour OpenGL sous licence BSD. La scène est dessinée dans $GLWidget::paintGL()$, méthode appelée à chaque rafraichissement de l'image. Les éléments de la scène (balle, sol, mur, robot ...) sont déclarés dans l'en-tête de GLWidget et dessinés dans cette méthode $paintGL()$. Les éléments affichables sont :\\
+
 
 \begin{itemize}
-\item \textit{CoordinateSystem} : Le visualisateur dispose d'une classe \textit{CoordinateSystem} qui représente le système de coordonnées de la scène. Il est déplacé en fonction du système de coordonnées OpenGL pour correspondre à celui réellement utilisé dans la scène.
-\item \textit{Ball} : 
-\item 
+\item \textit{CoordinateSystem} : Cet élément représente le système de coordonnées de la scène. Il est déplacé en fonction du système de coordonnées OpenGL pour correspondre à celui réellement utilisé dans la scène.
+\item \textit{Ball} : Cet élément représente une balle dont la couleur, le diamètre et la position dans l'espace sont moifiables
+\item \textit{Plane} : Cet élément représente un plan, typiquement utilisé pour le sol et les murs. Il peut être dessiné soit avec un fond plein, soit avec un fond cadrillé et transparant
+\item \textit{Arm} : Cet élément représente le bras, la position de la base et les angles des servomoteurs peuvent être modifiés. Le dessin fait appel au modèle géométrique. \\
 \end{itemize}
+
+Il est possible de déclarer autant d'exemplaires de bras, de balles ou de trajectoires que souhaité. Les trajectoires disposent d'un identifiant pour facilier leur mise à jour au cours du temps. \\
+
+La figure \ref{viewer} est une capture du visualisateur, sur une scène comprenant un sol cadrillé, un mur gris plein, le repère scène à son pied à gauche (axe $x$ rouge, axe $y$ vert, axe $z$ bleu), ainsi qu'une trajectoire et une balle. Sur cette capture le bras n'est pas encore modélisé.
+\begin{figure}[!htc]
+	\begin{center}
+		\includegraphics[scale=0.5]{images/viewer.png}
+		\caption{Capture de la visualisation OpenGL d'un repère, un sol, un mur, une trajectoire et une balle} 
+		\label{viewer}
+	\end{center}
+\end{figure}
 
 
 
 \section{Conclusion}
+
+Nous avons découpé ce projet en trois parties : l'obtention des coordonnées avec Arena, réalisée par le module "Client/Data streaming", le calcul de la trajectoire de la balle et du point d'impact réalisé par le module "Impact" qui commande le bras en faisant appel aux modèles géométriques direct et inverse du robot, et un visualisateur 3D permettant de représenter la scène. \\
+
+Les trois parties ne sont pas encore terminées et demandent a être encore approfondies avant d'être rassemblées et qu'elle puissent communiquer ensemble grâce au protocole simple décrit dans ce rapport. L'utilisation obligatoire des marqueurs pour l'aquisition des points avec Optitrack nous empêche d'utiliser directement une balle. Même recouverte de papier aluminium les résultats ne sont pas satisfaisant, car plutôt que de détecter un point l'aluminium reflète plusieurs points qu'il est impossible de regrouper dans un corps rigide étant donné qu'il n'y en a pas toujours le même nombre. Une parade reste donc encore à trouver pour utiliser Optitrack avec une balle. \\
+
+Faute de temps, l'implémentation du module de modélisation n'a pas pu être terminée. Néanmoins, nous disposons de tous les éléments nécessaires à son implémentation. Le visualisateur est pour l'instant capable d'afficher les principaux éléments graphiques, mais il ne s'agit que d'affichage. La source des données du visualisateur sont les autres modules : elles proviennent des informations transmises par Optitrack ou relayées/calculées par le calculateur de point d'impact. D'autre part la classe permettant de représenter le bras est pour le moment très incomplète, il lui faut s'appuyer sur le modèle géométrique direct pour dessiner correctement les seux segments représentant graphiquement le bras dans le modèle 3D.
 
 
 \begin{thebibliography}{}
