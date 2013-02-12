@@ -1,47 +1,13 @@
-//=============================================================================
-// Copyright © 2010 NaturalPoint, Inc. All Rights Reserved.
-// 
-// This software is provided by the copyright holders and contributors "as is" and
-// any express or implied warranties, including, but not limited to, the implied
-// warranties of merchantability and fitness for a particular purpose are disclaimed.
-// In no event shall NaturalPoint, Inc. or contributors be liable for any direct,
-// indirect, incidental, special, exemplary, or consequential damages
-// (including, but not limited to, procurement of substitute goods or services;
-// loss of use, data, or profits; or business interruption) however caused
-// and on any theory of liability, whether in contract, strict liability,
-// or tort (including negligence or otherwise) arising in any way out of
-// the use of this software, even if advised of the possibility of such damage.
-//=============================================================================
-
-/*
-
-PacketClient.cpp
-
-Decodes NatNet packets directly.
-
-Usage [optional]:
-
-	PacketClient [ServerIP] [LocalIP]
-
-	[ServerIP]			IP address of server ( defaults to local machine)
-	[LocalIP]			IP address of client ( defaults to local machine)
-
-*/
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <unistd.h> /* close */
+#include <unistd.h> 
 #include <netdb.h>
 #include <string.h>
 #include <pthread.h>
-//#include <tchar.h>
-//#include <conio.h>
-//#include <winsock2.h>
-//#include <ws2tcpip.h>
 
 #pragma warning( disable : 4996 )
 
@@ -71,7 +37,7 @@ typedef struct
 
 typedef struct
 {
-    unsigned short iMessage;                // message ID (e.g. NAT_FRAMEOFDATA)
+    unsigned short iMessage;                // message ID 
     unsigned short nDataBytes;              // Num bytes in payload
     union
     {
@@ -120,11 +86,6 @@ void * CommandListenThread(void* dummy)
         if((nDataBytesReceived == 0) || (nDataBytesReceived == -1) )
             continue;
 
-        // debug - print message
-	/* sprintf(str, "[Client] Received command from %d.%d.%d.%d: Command=%d, nDataBytes=%d",
-            TheirAddress.sin_addr.S_un.S_un_b.s_b1, TheirAddress.sin_addr.S_un.S_un_b.s_b2,
-            TheirAddress.sin_addr.S_un.S_un_b.s_b3, TheirAddress.sin_addr.S_un.S_un_b.s_b4,
-            (int)PacketIn.iMessage, (int)PacketIn.nDataBytes);*/
 	sprintf(str, "[Client] Received command from %s: Command=%d, nDataBytes=%d",inet_ntoa(TheirAddress.sin_addr),(int)PacketIn.iMessage, (int)PacketIn.nDataBytes);
 
 
@@ -169,11 +130,12 @@ void * DataListenThread(void* dummy)
     char  szData[20000];
     unsigned int addr_len = sizeof(struct sockaddr);
     sockaddr_in TheirAddress;
-
+    printf("DataListenThread launched\n");
     while (1)
     {
-        // Block until we receive a datagram from the network (from anyone including ourselves)
+        // Block until we receive a datagram from the network
         int nDataBytesReceived = recvfrom(DataSocket, szData, sizeof(szData), 0, (sockaddr *)&TheirAddress, &addr_len);
+        printf("Receiving Data\n");
         Unpack(szData);
     }
 
@@ -198,7 +160,7 @@ int CreateCommandSocket(unsigned long IP_Address, unsigned short uPort)
     memset(&my_addr, 0, sizeof(my_addr));
     my_addr.sin_family = AF_INET;
     my_addr.sin_port = htons(uPort);
-    my_addr.sin_addr.s_addr = IP_Address; // a voir
+    my_addr.sin_addr.s_addr = IP_Address; 
     if (bind(sockfd, (struct sockaddr *)&my_addr, sizeof(struct sockaddr)) == -1)
     {
         close(sockfd);
@@ -222,16 +184,8 @@ int main(int argc, char* argv[])
     char szMyIPAddress[128] = "";
     char szServerIPAddress[128] = "";
     in_addr MyAddress, MultiCastAddress;
-    //WSADATA WsaData; 
     int optval = 0x100000;
     unsigned int optval_size = 4;
-
-    /*if (WSAStartup(0x202, &WsaData) == SOCKET_ERROR)
-    {
-		printf("[PacketClient] WSAStartup failed (error: %d)\n", WSAGetLastError());
-        WSACleanup();
-        return 0;
-	}*/
 
 	// server address
 	if(argc>1)
@@ -242,7 +196,6 @@ int main(int argc, char* argv[])
 	else
 	{
         GetLocalIPAddresses((unsigned long *)&ServerAddress, 1);
-	// sprintf(szServerIPAddress, "%d.%d.%d.%d", ServerAddress.S_un.S_un_b.s_b1, ServerAddress.S_un.S_un_b.s_b2, ServerAddress.S_un.S_un_b.s_b3, ServerAddress.S_un.S_un_b.s_b4);
 	sprintf(szServerIPAddress,"%s",inet_ntoa(ServerAddress));
 	}
 
@@ -255,43 +208,30 @@ int main(int argc, char* argv[])
 	else
 	{
         GetLocalIPAddresses((unsigned long *)&MyAddress, 1);
-        //sprintf(szMyIPAddress, "%d.%d.%d.%d", MyAddress.S_un.S_un_b.s_b1, MyAddress.S_un.S_un_b.s_b2, MyAddress.S_un.S_un_b.s_b3, MyAddress.S_un.S_un_b.s_b4);
 	sprintf(szMyIPAddress,"%s",inet_ntoa(MyAddress));
     }
-  	MultiCastAddress.s_addr = inet_addr(MULTICAST_ADDRESS); //modif   
+  	MultiCastAddress.s_addr = inet_addr(MULTICAST_ADDRESS);   
     printf("Client: %s\n", szMyIPAddress);
     printf("Server: %s\n", szServerIPAddress);
     printf("Multicast Group: %s\n", MULTICAST_ADDRESS);
 
     // create "Command" socket
     int port = 0;
-    CommandSocket = CreateCommandSocket(MyAddress.s_addr,port); //modif
+    CommandSocket = CreateCommandSocket(MyAddress.s_addr,port);
     if(CommandSocket == -1)
     {
         // error
     }
     else
     {
-        // [optional] set to non-blocking
-        //u_long iMode=1;
-        //ioctlsocket(CommandSocket,FIONBIO,&iMode); 
-        // set buffer
         setsockopt(CommandSocket, SOL_SOCKET, SO_RCVBUF, (char *)&optval, 4);
         getsockopt(CommandSocket, SOL_SOCKET, SO_RCVBUF, (char *)&optval, &optval_size);
         if (optval != 0x100000)
         {
-            // err - actual size...
+            // err
         }
         // startup our "Command Listener" thread
 
-	/*
-        SECURITY_ATTRIBUTES security_attribs;
-        security_attribs.nLength = sizeof(SECURITY_ATTRIBUTES);
-        security_attribs.lpSecurityDescriptor = NULL;
-        security_attribs.bInheritHandle = TRUE;
-        DWORD CommandListenThread_ID;
-        HANDLE CommandListenThread_Handle;
-        CommandListenThread_Handle = CreateThread( &security_attribs, 0, CommandListenThread, NULL, 0, &CommandListenThread_ID);*/
 	pthread_t CommandListenthread_Handle;
 	int CommandListenThread_ID;
 	CommandListenThread_ID = pthread_create(&CommandListenthread_Handle, NULL,CommandListenThread, NULL);
@@ -317,8 +257,6 @@ int main(int argc, char* argv[])
     MySocketAddr.sin_addr = MyAddress; 
     if (bind(DataSocket, (struct sockaddr *)&MySocketAddr, sizeof(struct sockaddr)) == -1)
     {
-      /*	printf("[PacketClient] bind failed (error: %d)\n", WSAGetLastError());
-		WSACleanup();*/
         printf("[PacketClient] bind failed\n");
         return 0;
     }
@@ -329,8 +267,6 @@ int main(int argc, char* argv[])
     retval = setsockopt(DataSocket, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char *)&Mreq, sizeof(Mreq));
     if (retval == -1)
     {
-      /*printf("[PacketClient] join failed (error: %d)\n", WSAGetLastError());
-        WSACleanup();*/
         printf("[PacketClient] join failed\n");
         return -1;
     }
@@ -342,15 +278,7 @@ int main(int argc, char* argv[])
         printf("[PacketClient] ReceiveBuffer size = %d", optval);
     }
     // startup our "Data Listener" thread
-    /*
-    SECURITY_ATTRIBUTES security_attribs;
-    security_attribs.nLength = sizeof(SECURITY_ATTRIBUTES);
-    security_attribs.lpSecurityDescriptor = NULL;
-    security_attribs.bInheritHandle = TRUE;
-    DWORD DataListenThread_ID;
-    HANDLE DataListenThread_Handle;
-    DataListenThread_Handle = CreateThread( &security_attribs, 0, DataListenThread, NULL, 0, &DataListenThread_ID);*/
-
+  
     pthread_t DataListenThread_Handle;
     int DataListenThread_ID;
     DataListenThread_ID = pthread_create(&DataListenThread_Handle, NULL,DataListenThread, NULL);
@@ -468,12 +396,11 @@ bool IPAddress_StringToAddr(char *szNameOrAddress, struct in_addr *Address)
 	// getnameinfo
 	if ((retVal = getnameinfo((struct sockaddr *)&saGNI, sizeof(sockaddr), hostName, 256, servInfo, 256, NI_NUMERICSERV)) != 0)
 	{
-	  //printf("[PacketClient] GetHostByAddr failed. Error #: %ld\n", WSAGetLastError());
 	  printf("[PacketClient] GetHostByAddr failed.\n");
 		return false;
 	}
 
-	Address->s_addr = saGNI.sin_addr.s_addr; //modif
+	Address->s_addr = saGNI.sin_addr.s_addr;
 	
     return true;
 }
@@ -491,7 +418,7 @@ int GetLocalIPAddresses(unsigned long Addresses[], int nMax)
     
     if(gethostname(szMyName, NameLength) == -1)
     {
-      printf("[PacketClient] get computer name  failed.\n");// Error #: %ld\n", WSAGetLastError());
+      printf("[PacketClient] get computer name  failed.\n");
         return 0;       
     };
 
@@ -501,13 +428,13 @@ int GetLocalIPAddresses(unsigned long Addresses[], int nMax)
 	aiHints.ai_protocol = IPPROTO_UDP;
 	if ((retVal = getaddrinfo(szMyName, port, &aiHints, &aiList)) != 0) 
 	{
-	  printf("[PacketClient] getaddrinfo failed.\n"); //Error #: %ld\n", WSAGetLastError());
+	  printf("[PacketClient] getaddrinfo failed.\n");
         return 0;
 	}
 
     memcpy(&addr, aiList->ai_addr, aiList->ai_addrlen);
     freeaddrinfo(aiList);
-    Addresses[0] = addr.sin_addr.s_addr;  //modif
+    Addresses[0] = addr.sin_addr.s_addr;
 
     return 1;
 }
