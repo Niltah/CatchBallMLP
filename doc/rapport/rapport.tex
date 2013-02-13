@@ -142,31 +142,12 @@ La première étape consiste à calibrer les caméras entre elles. En démarrant
 
 L'étape de calibration peut ensuite commencer. Il s'agit de déplacer trois marqueurs au bout d'une baguette Optiwand pour couvrir au maximum le volume de la scène dans un maximum d'orientations possibles. Toutes les caméras doivent visualiser les marqueurs pour que les points puissent participer à la calibration. A l'issue du processus de calcul Arena est capable de disposer les caméras dans l'espace les unes par rapport aux autres sur une carte. 
 \newpage
-<<<<<<< HEAD
-Il faut ensuite placer le repère (représenté par une équerre en métal sur laquelle sont disposés trois marqueurs) afin de définir l'origine et l'orientation des axes du repère.\\
-=======
 Il faut ensuite placer le repère (représenté par une équerre en métal sur laquelle sont disposés trois marqueurs) afin de définir l'origine et l'orientation des axes du repère. La calibration est ainsi terminée et Arena peut afficher la position d'un marqueur dans l'espace.\\
->>>>>>> 30c2422cf352727868de7aa5bca667e4d0f973c8
 
 Note : la licence Arena a été enregistrée pour la caméra 179282. Cette caméra doit donc impérativement être branchée pour démarrer Arena.
 
 \subsection{Constitution d'un Corps Rigide}
 
-<<<<<<< HEAD
-Une fois les caméra calibrées, il est important de créer un corps rigide.
-Un corps rigide représente un ensemble de points ne bougeant pas les uns par rapport aux autres. Cela nous permet de reconnaître facilement les points intéressant (comme les trois marqueurs de la baguette de calibration). De plus, il est impératif d'avoir un corps rigide afin de pouvoir transférer les positions à un programme tiers. La création d'un corps rigide se fait facilement en faisant bouger les marqueurs de l'objet dans le champs de vision des caméras.
-
-\subsection{Exportation des coordonnées}
-
-Arena embarque un serveur diffusant les coordonnées du corps rigide, apellé NatNet. Un client récupérant ces coordonnées existe déjà pour Windows, nous l'avons adapté pour qu'il puisse fonctionner sous Linux et pour l'intégrer à notre Ball catcher. 
-
-\subsection{Calcul de l'erreur sur les coordonnées}
-Afin de connaître la précision du système de motion tracking, nous avons mesuré l'écart entre deux marqueurs avec une règle, puis avec les coordonnées récupérées depuis le logiciel optitrack. En moyenne, on obtient une erreur de 3 millimètres tout les 25 centimètres 
-\newpage
-\section{Modélisation et Modèle Géométrique Inverse}
-\input{modelisation}
-
-=======
 Une fois les caméra calibrées, il est important de créer un corps rigide pusiqu'il s'agit a priori du seul moyen d'exporter les coordonnées des points capturés. \\
 
 Un corps rigide représente un ensemble de points ne bougeant pas les uns par rapport aux autres. Cela nous permet de reconnaître facilement les points intéressants (comme les trois marqueurs de la baguette de calibration). De plus, il est impératif d'avoir un corps rigide afin de pouvoir transférer les positions à un programme tiers. La création d'un corps rigide se fait facilement en faisant bouger les marqueurs de l'objet dans le champs de vision des caméras.
@@ -181,7 +162,6 @@ Afin de connaître la précision du système de motion tracking, nous avons mesu
 \section{Modélisation et Modèle Géométrique Inverse}
 \input{modelisation}
 
->>>>>>> 30c2422cf352727868de7aa5bca667e4d0f973c8
 \section{Prédiction de trajectoire}
 \input{prediction}
 

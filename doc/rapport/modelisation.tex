@@ -1,30 +1,14 @@
-<<<<<<< HEAD
-Nous désirons déplacer le robot en lui fournissant un position de destination absolue $(x, y, z)$ dans un repère lié à la salle. Or, le robot se positionne en utilisant les valeurs angulaires que doivent prendre ses moteurs. Il était donc nécessaire d'implémenter un module permettant de passer d'une position absolue aux valeurs angulaires associées, d'ou la nécessité du calcul d'un modèle géométrique inverse.
 
-\subsection{Modélisation}
-
-Afin de modéliser le bras, nous avons nommé les moteurs de la façon suivante :\\
-=======
 Nous désirons déplacer le robot en lui fournissant un position de destination absolue $(x, y, z)$ dans un repère lié à la salle. Or, le robot se positionne en utilisant les valeurs angulaires que doivent prendre ses moteurs. Il était donc nécessaire d'implémenter un module permettant de passer d'une position absolue aux valeurs angulaires associées, d'où la nécessité du calcul d'un modèle géométrique inverse. Ceci est intégré dans la partie "Calcul d'Impact" dans le découpage de notre application.
 
 \subsection{Modélisation}
 
 Afin de modéliser le bras, nous avons nommé les moteurs comme indiqué sur la photographie \ref{moteurs} :\\
->>>>>>> 30c2422cf352727868de7aa5bca667e4d0f973c8
 
 \begin{figure}[!htc]
 	\begin{center}
 		\includegraphics[scale=0.6]{images/robot1.jpg}
 		\caption{Bras robotique et noms des moteurs} 
-<<<<<<< HEAD
-		\label{general}
-	\end{center}
-\end{figure}
-
-La première étape de la modélisation a été de mettre en place une paramétrisation de Denavit-Hartenberg, qui nous permet de déterminer un repère différent lié à chacun des moteurs, afin de pouvoir récupérer ensuite des équations éxploitables pour la détermination du modèle géométrique inverse.
-\newpage
-La représentation en question est la suivante :\\
-=======
 		\label{moteurs}
 	\end{center}
 \end{figure}
@@ -32,17 +16,12 @@ La représentation en question est la suivante :\\
 La première étape de la modélisation a été de mettre en place une paramétrisation de Denavit-Hartenberg, qui nous permet de déterminer un repère différent lié à chacun des moteurs, afin de pouvoir récupérer ensuite des équations exploitables pour la détermination du modèle géométrique inverse.
 \newpage
 La représentation en question est en figure \ref{denavit} :\\
->>>>>>> 30c2422cf352727868de7aa5bca667e4d0f973c8
 
 \begin{figure}[!htc]
 	\begin{center}
 		\includegraphics[scale=0.7]{images/denavit.png}
 		\caption{Représentation du bras en paramétrisation de Denavit-Hartenberg} 
-<<<<<<< HEAD
-		\label{general}
-=======
 		\label{denavit}
->>>>>>> 30c2422cf352727868de7aa5bca667e4d0f973c8
 	\end{center}
 \end{figure}
 
@@ -79,11 +58,7 @@ Constatons que pour une orientation et une position fixée de la main, bien qu'i
 De plus, pour une position et une orientation fixe de la main, le centre du moteur 6 est lui aussi déterminé, et immobile dans le repère 0. Le centre du moteur 2 étant l'origine de ce repère 0, la position désirée de l'effecteur nous donne connue la position du centre de ce moteur 6, et donc la distance entre les centres des moteurs 2 et 6.
 \newpage
 
-<<<<<<< HEAD
-Nous avons donc ainsi un triangle formé par les centres des moteurs 2, 4 et 6, dont nous connaissons les longueurs et côtés, ce qui nous permet ainsi de déterminer la valeur de l'angle du moteur 4 selon les paramètre imposés par la position désirée de la main.\\
-=======
 Nous avons donc ainsi un triangle formé par les centres des moteurs 2, 4 et 6, dont nous connaissons les longueurs et côtés, ce qui nous permet ainsi de déterminer la valeur de l'angle du moteur 4 selon les paramètres imposés par la position désirée de la main.\\
->>>>>>> 30c2422cf352727868de7aa5bca667e4d0f973c8
 
 Arrivé à ce niveau la, nous avons donc 6 valeurs à déterminer, pour lesquelles nous avons 1 degré le liberté. Nous faisons le choix arbitraire d'imposer la valeur du moteur 3 (choisi du fait que le moteur 5 permet une liberté suffisante dans le déplacement malgré une immobilisation du moteur 3), ce qui nous fige le système.\\
 
@@ -97,20 +72,12 @@ Après quoi, nous utilisons maxima pour obtenir des équations sur les angles de
 
 \end{itemize}
 
-<<<<<<< HEAD
-Nous avons donc, à ce niveau, fixé arbitrairement la valeur de M3, et déterminé six équations nous permettant de déterminer les valeurs des moteurs restants.
-=======
 Nous avons donc, à ce niveau, fixé arbitrairement la valeur de M3, et obtenu six équations nous permettant de déterminer les valeurs des moteurs restants.
->>>>>>> 30c2422cf352727868de7aa5bca667e4d0f973c8
 
 \subsection{Résolution des équations du modèle géométrique inverse}
 
 Nous avons ensuite entamé l'implémentation d'un module du code C++ qui nous permettra de résoudre ces équations, afin d'obtenir les valeurs angulaires à passer effectivement au robot afin que la main se place dans une position $(x, y, z)$ voulue.\\
 
-<<<<<<< HEAD
-Les équations à résoudre par ce module sont toutes des équations de Paul de type 2 ou des équations triginométriques, qui auront toutes, dans le cas ou l'équation est bien posée, et dans le cas général, deux solutions distinctes, toutes deux mathématiquement correctes, mais dont seule une sera applicable sur le robot. Ainsi, il est necéssaire pour ce module de tester les valeurs renvoyées par les fonctions de résolution d'équations afin de savoir quelle valeure garder, et pour se faire, de récupérer toutes les valeurs minimales et maximales pouvant être prises par les différents moteurs composant le bras.
-\newpage
+Les équations à résoudre par ce module sont toutes des équations de Paul de type 2 ou des équations triginométriques, qui auront toutes, dans le cas ou l'équation est bien posée, et dans le cas général, deux solutions distinctes, toutes deux mathématiquement correctes, mais dont seule une sera applicable sur le robot. Ainsi, il est necéssaire pour ce module de tester les valeurs renvoyées par les fonctions de résolution d'équations afin de savoir quelle valeure garder, et pour se faire, de récupérer toutes les valeurs minimales et maximales pouvant être prises par les différents moteurs composant le bras.\\
+
 Faute de temps, l'implémentation de ce module n'a pas pu être terminée, néanmoins, nous disposons de tous les éléments nécessaires à son implémentation, et n'est donc pas fonctionnelle uniquement par manque de temps.
-=======
-Les équations à résoudre par ce module sont toutes des équations de Paul de type 2 ou des équations triginométriques qui auront toutes, dans le cas ou l'équation est bien posée et dans le cas général, deux solutions distinctes. Ces deux solutions seront mathématiquement correctes, mais seule une sera applicable sur le robot. Ainsi, il est necéssaire pour ce module de tester les valeurs renvoyées par les fonctions de résolution d'équations afin de savoir quelle valeure garder, et pour ce faire, de récupérer toutes les valeurs minimales et maximales pouvant être atteintes par les différents moteurs composant le bras.
->>>>>>> 30c2422cf352727868de7aa5bca667e4d0f973c8
