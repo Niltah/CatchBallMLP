@@ -79,6 +79,17 @@ GLWidget::GLWidget(QWidget *parent)
         Point(-EPSILON, 1, 0.4),
         Point(-EPSILON, 1, -EPSILON),
         Point(-EPSILON, -0.1, -EPSILON));
+
+    // Génération d'une fake trajectoire
+    trajectory = new Trajectory(0);
+    float x, y, z;
+    for(int i=0; i<17; ++i) {
+        x = 0.4-0.3*sin(i/10.0);
+        y = 0.2;
+        z = 0.2*cos(i/10.0);
+        trajectory->addPoint(Point(x, y, z));
+    }
+    ball->updatePosition(x, y, z); // On place la balle au bout de la trajectoire
 }
 
 GLWidget::~GLWidget()
@@ -87,6 +98,7 @@ GLWidget::~GLWidget()
     delete ground;
     delete wall;
     delete cs;
+    delete trajectory;
 }
 
 QSize GLWidget::minimumSizeHint() const
@@ -170,6 +182,7 @@ void GLWidget::paintGL()
     cs->loadSceneCS();
 
     ball->draw();
+    trajectory->draw();
 }
 
 void GLWidget::resizeGL(int width, int height)

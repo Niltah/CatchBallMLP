@@ -9,6 +9,9 @@ Trajectory::Trajectory(int id)
 {
     _ID = id;
     _points = new vector<Point>;
+    r = 1;
+    g = 0.8;
+    b = 0;
 }
 
 Trajectory::Trajectory()
@@ -41,11 +44,19 @@ int Trajectory::getID() {
 void Trajectory::draw() {
     if(!isEmpty()) {
         vector<Point>::iterator i;
-        glColor3f(1, 0.82, 0);
-        glBegin(GL_LINE_LOOP);
+        glColor3f(r, g, b);
+        glBegin(GL_LINE);
         for(i=_points->begin(); i<_points->end(); ++i) {
             glVertex3f(i->x, i->y, i->z);
+            if(i!=_points->begin() && i!=_points->end())
+                glVertex3f(i->x, i->y, i->z);
         }
         glEnd();
     }
+}
+
+void Trajectory::setColor3f(float red, float green, float blue) {
+    r = red;
+    g = green;
+    b = blue;
 }

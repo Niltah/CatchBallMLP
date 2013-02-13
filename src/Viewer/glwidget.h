@@ -47,6 +47,7 @@
 #include "ball.h"
 #include "coordinatesystem.h"
 #include "plane.h"
+#include "trajectory.h"
 
 
  class GLWidget : public QGLWidget
@@ -90,6 +91,7 @@
      CoordinateSystem *cs;
      Plane *ground;
      Plane *wall;
+     Trajectory *trajectory;
  };
 
  #endif
