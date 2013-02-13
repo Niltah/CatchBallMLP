@@ -16,4 +16,6 @@ public:
     double z;
 };
 
+void normalizeAngle(float &angle);
+
 #endif // TOOLS_H

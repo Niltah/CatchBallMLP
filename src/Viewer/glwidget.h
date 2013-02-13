@@ -46,6 +46,7 @@
 #include <QtOpenGL/QGLWidget>
 #include "ball.h"
 #include "coordinatesystem.h"
+#include "plane.h"
 
 
  class GLWidget : public QGLWidget
@@ -75,16 +76,20 @@
      void resizeGL(int width, int height);
      void mousePressEvent(QMouseEvent *event);
      void mouseMoveEvent(QMouseEvent *event);
+     void wheelEvent(QWheelEvent *event);
 
  private:
      int xRot;
      int yRot;
      int zRot;
+     float zoom;
      QPoint lastPos;
      QColor qtGreen;
      QColor qtPurple;
      Ball *ball;
      CoordinateSystem *cs;
+     Plane *ground;
+     Plane *wall;
  };
 
  #endif

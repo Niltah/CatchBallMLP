@@ -42,6 +42,7 @@
 #include <QtOpenGL/QtOpenGL>
 #include <GL/glut.h>
 #include <math.h>
+#include <iostream>
 
 #include "glwidget.h"
 #include "coordinatesystem.h"
@@ -53,6 +54,7 @@
 GLWidget::GLWidget(QWidget *parent)
     : QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
 {
+    zoom = 0.001;
     xRot = 0;
     yRot = 0;
     zRot = 0;
@@ -66,11 +68,24 @@ GLWidget::GLWidget(QWidget *parent)
     cs = new CoordinateSystem();
     cs->moveCoordinateSystem(0.25, 0, 0.25);
 
+    ground = new Plane(
+        Point(-0.1,-0.1, -EPSILON),
+        Point(4,-0.1, -EPSILON),
+        Point(4, 1, -EPSILON),
+        Point(-0.1, 1, -EPSILON));
+
+    wall = new Plane(
+        Point(-EPSILON, -0.1, 0.4),
+        Point(-EPSILON, 1, 0.4),
+        Point(-EPSILON, 1, -EPSILON),
+        Point(-EPSILON, -0.1, -EPSILON));
 }
 
 GLWidget::~GLWidget()
 {
     delete ball;
+    delete ground;
+    delete wall;
     delete cs;
 }
 
@@ -146,24 +161,26 @@ void GLWidget::paintGL()
     cs->loadglCS();
     cs->rotateCoordinateSystem(xRot-90*16, yRot, zRot+180*16); // TODO
 
+    cs->loadSceneCS();
+    ground->draw(false);
+    wall->draw(true);
 
     cs->displayGlCS();
     cs->displaySceneCS();
     cs->loadSceneCS();
+
     ball->draw();
 }
 
 void GLWidget::resizeGL(int width, int height)
 {
-    int side = qMin(width, height);
-    glViewport((width - side) / 2, (height - side) / 2, side, side);
-
+    glViewport(0, 0, width, height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 #ifdef QT_OPENGL_ES_1
-    glOrthof(-0.5, +0.5, -0.5, +0.5, 4.0, 15.0);
+    glOrthof(-height/width, +height/width, -0.5, +0.5, 4.0, 15.0);
 #else
-    glOrtho(-0.5, +0.5, -0.5, +0.5, 4.0, 15.0);
+    glOrtho(-width*zoom/2.0, width*zoom/2.0, -height*zoom/2.0, height*zoom/2.0, 4.0, 15.0);
 #endif
     glMatrixMode(GL_MODELVIEW);
 }
@@ -186,4 +203,12 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
         setZRotation(zRot + 8 * dx);
     }
     lastPos = event->pos();
+}
+
+void GLWidget::wheelEvent(QWheelEvent *event)
+{
+    float z = event->delta()<0? 0.0001:-0.0001;
+    zoom += z;
+    resizeGL(width(), height());
+    glDraw();
 }
