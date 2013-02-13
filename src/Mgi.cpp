@@ -5,6 +5,10 @@
 
 using namespace std;
 
+/*
+Toutes les valeurs ainsi déterminées le sont pour l'instant à une constante près
+ */
+
 Mgi::Mgi()
 {
   d1 = 0;
@@ -39,7 +43,7 @@ float Mgi::getTheta1(){
   if(!testAngleValue(theta1, 1))
     theta1 = radianToDegree(S.Ai[1]);  
 
-  return theta1;
+  return theta1; // TODO theta1 + cte1
 }
 
 float Mgi::getTheta2()
