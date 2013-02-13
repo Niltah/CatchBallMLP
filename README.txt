@@ -2,7 +2,7 @@
 ============
 
 CHEIMANOFF Victor
-Mollard Yoan
-Cheippe Thibaud
+MOLLARD Yoan
+CHEIPPE Thibaud
 
 Catching ball with robotic arm
